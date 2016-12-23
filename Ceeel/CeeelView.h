@@ -30,8 +30,8 @@ protected:
 
 
 private:
-
-
+	//Mouse location
+	int  m_lastMouseX, m_lastMouseY;
 	CGLRenderer m_glRenderer;
 	//Rendering Context and Device Context Pointers
 	HGLRC     m_hRC;
@@ -59,6 +59,7 @@ public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 };
 
 #ifndef _DEBUG  // debug version in CeeelView.cpp

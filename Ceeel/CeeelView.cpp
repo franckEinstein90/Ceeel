@@ -29,6 +29,7 @@ BEGIN_MESSAGE_MAP(CCeeelView, CView)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_SIZE()
+	ON_WM_MOUSEMOVE()
 END_MESSAGE_MAP()
 
 const char* const CCeeelView::_ErrorStrings[] = {
@@ -57,8 +58,6 @@ CCeeelView::~CCeeelView()
 
 BOOL CCeeelView::PreCreateWindow(CREATESTRUCT& cs)
 {
-	// TODO: Modify the Window class or styles here by modifying
-	//  the CREATESTRUCT cs
 	cs.style |= WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
 	return CView::PreCreateWindow(cs);
 }
@@ -72,6 +71,7 @@ void CCeeelView::OnDraw(CDC* /*pDC*/)
 	if (!pDoc)
 		return;
 
+//	m_glRenderer.set_camera(camera_vector);
 	m_glRenderer.DrawScene(m_pDC);
 }
 
@@ -172,4 +172,41 @@ void CCeeelView::SetError(int e)
 	{
 		m_ErrorString = _ErrorStrings[e];
 	}
+}
+
+
+void CCeeelView::OnMouseMove(UINT nFlags, CPoint point)
+{
+	if (nFlags & MK_CONTROL)
+	{
+		if (nFlags & MK_LBUTTON)
+		{
+			// Left mouse button is being
+			// pressed. Rotate the camera.
+			if (m_lastMouseX != -1)
+			{
+//				m_yrot += point.y - m_lastMouseY;
+//				m_xrot += point.x - m_lastMouseX;
+				// Redraw the viewport.
+				OnDraw(NULL);
+			}
+//			m_lastMouseX = point.x;
+//			m_lastMouseY = point.y;
+		}
+
+		// etc...
+
+		else
+		{
+//			m_lastMouseX = -1;
+//			m_lastMouseY = -1;
+		}
+	}
+	else
+	{
+//		m_lastMouseX = -1;
+//		m_lastMouseY = -1;
+	}// TODO: Add your message handler code here and/or call default
+
+	CView::OnMouseMove(nFlags, point);
 }

@@ -73,9 +73,8 @@ bool CGLRenderer::CreateGLContext(CDC* pDC)
 
 void CGLRenderer::PrepareScene()
 {
-	glClearColor(0.0, 1.0, 0.0, 0.0);
-
-	
+//	glClearColor(248.0/255.0, 243.0/255.0, 230.0/255.0, 0.0);
+	glClearColor(BACK_COLOR, 0.0);	
 	SetData();
 }
 
@@ -142,62 +141,54 @@ void CGLRenderer::Reshape(int w, int h)
 	glViewport(0, 0, w, h);
 }
 
-void CGLRenderer::DrawScene(CDC *pDC)
-{
-	int half_grid_size = 5;
-	float back_z = -4.0;
-	float top_y = 5.0;
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode(GL_PROJECTION); glLoadIdentity(); gluPerspective(50.0, 1.0, -13.0, 15.0); 
-	glMatrixMode(GL_MODELVIEW); glLoadIdentity(); gluLookAt(0.0, 0.0, 15.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-	glBegin(GL_LINES);
+void Board::draw() {
+	float mid_z = -1;
 
+	float left_x = -2.0;
+	float right_x = 2.0;
+	float front_z = 2.0;
+	float back_z = -2.0;
+	float top_y = 2.0;
+	float bottom_y = -2.0;
 
-	glVertex3f(-5.0,top_y,1.0);
-	glVertex3f(5.0,top_y,1.0);
-	glVertex3f(-5.0,top_y,back_z);
-	glVertex3f(5.0, top_y,back_z);
+	glColor3f(TOKEN_COLOR);
+	glBegin(GL_QUADS);
+	glVertex3f(left_x, top_y, front_z);
+	glVertex3f(0.0, top_y, front_z);
+	glVertex3f(0.0, 0.0, front_z);
+	glVertex3f(left_x, 0.0, front_z);
 
-	glVertex3f(-5.0, -5.0, 1.0);
-	glVertex3f(5.0, -5.0, 1.0);
-	glVertex3f(-5.0, -5.0, back_z);
-	glVertex3f(5.0, -5.0, back_z);
-	
-	glVertex3f(0.0, -5.0, 1.0);
-	glVertex3f(0.0, -5.0, 1.0);
-	glVertex3f(0.0, -5.0, back_z);
-	
-	glVertex3f(0.0, -5.0, back_z);
-	
-	
-	/*	for (int i = -half_grid_size; i <= half_grid_size; i++)
-	{
-		glVertex3f((float)i, (float)-half_grid_size,0);
-		glVertex3f((float)i, (float)half_grid_size,0);
-
-		glVertex3f((float)-half_grid_size, (float)i,0);
-		glVertex3f((float)half_grid_size, (float)i,0);
-
-
-	}*/
-
+	glColor3f(1.0, 0.0, 0.0);
+	glVertex3f(right_x, -0.5, back_z);
+	glVertex3f(0.0, -0.5, back_z);
+	glVertex3f(0.0, 0.0, back_z);
+	glVertex3f(right_x, 0.0, back_z);
 	glEnd();
-	/*
-	glBindVertexArray(m_vaoID[0]);		// select first VAO
-	glDrawArrays(GL_TRIANGLES, 0, 3);	// draw first object
-
-	glRotatef(45.0f, 0.0f, 1.0f, 0.2f);
-	glBindVertexArray(m_vaoID[1]);		// select second VAO
-	glVertexAttrib3f((GLuint)1, 1.0, 0.0, 0.0); // set constant color attribute
-	glDrawArrays(GL_TRIANGLES, 0, 3);	// draw second object
-	glBindVertexArray(0);
-	
-
-	FinishDrawing();
-	*/
-	SwapBuffers(pDC->m_hDC);
 }
 
+void CGLRenderer::DrawScene(CDC *pDC)
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	//glOrtho (-5,5,-5,5,-5,5);
+
+	float near_val = 1.0;
+	float far_val = 10.0;
+
+	float frustrum_left = -2.0;
+	float frustrum_right = -1 * frustrum_left;
+	glFrustum(frustrum_left, frustrum_right, -1.0, 1.0, near_val, far_val);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	float my_location = 5.0;
+	gluLookAt(0.0, 0.0, my_location, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	
+	m_board.draw();
+	
+	SwapBuffers(pDC->m_hDC);
+}
 void CGLRenderer::FinishDrawing()
 {
 	glFinish();
