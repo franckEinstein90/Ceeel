@@ -5,6 +5,15 @@
 #include <GL/wglew.h>
 #include <GL/freeglut.h>
 #include <GL/freeglut_ext.h>
+//Asset Import Libar
+
+#include <glm/vec3.hpp>
+
+#include <string>
+#include <vector>
+using namespace std;
+
+
 
 #define _FL(iVal) iVal.0/255.0
 
@@ -24,7 +33,10 @@ public:
 class Board {
 private:
 	float m_xrot, m_yrot;
+	vector< glm::vec3 > vertices;
+	vector<string> elements;
 public:
+	Board(const string&);
 	void draw();
 };
 class CGLRenderer

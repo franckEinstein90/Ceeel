@@ -1,7 +1,54 @@
 #include "stdafx.h"
 #include "GLRenderer.h"
 
-CGLRenderer::CGLRenderer()
+#include <stdio.h>
+#include <stdlib.h>
+#include <glm/vec3.hpp>
+
+#include <fstream>
+#include <sstream>
+#include <vector>
+using namespace std;
+
+Board::Board(const string& file_name) {
+	string model;
+	string info_package;
+	std::vector< glm::vec3 > temp_uvs;
+	std::vector< glm::vec3 > temp_normals;
+	ifstream infile;
+	infile.open(file_name);
+	if (!infile) {
+		AfxMessageBox(_T("unable to oo"));
+	}
+	while (getline(infile, info_package)) {
+		if (info_package.substr(0, 2) == "v ")
+		{
+			istringstream s(info_package.substr(2));
+			glm::vec3 v; s >> v.x; s >> v.y; s >> v.z;
+			vertices.push_back(v);
+		}
+		else if (info_package.substr(0, 2) == "f ")
+		{
+			istringstream s(info_package.substr(2));
+			string a, b, c;
+			s >> a; s >> b; s >> c;
+
+		//	a--; b--; c--;
+		elements.push_back(a); elements.push_back(b); elements.push_back(c);
+		}
+		else if (info_package[0] == '#')
+		{
+			/* ignoring this line */
+		}
+		else
+		{
+			/* ignoring this line */
+		}
+	}
+}
+
+
+CGLRenderer::CGLRenderer():m_board("C:\\Ceel_the_game\\Ceeel\\assets\\board.obj")
 {
 }
 

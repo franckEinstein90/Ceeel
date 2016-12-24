@@ -10,6 +10,7 @@
 #include "resource.h"       // main symbols
 
 
+
 // CCeeelApp:
 // See Ceeel.cpp for the implementation of this class
 //
@@ -18,7 +19,9 @@ class CCeeelApp : public CWinApp
 {
 public:
 	CCeeelApp();
-
+protected:
+	bool is_64_bit_architecture;
+	void update_game_vars();
 
 // Overrides
 public:

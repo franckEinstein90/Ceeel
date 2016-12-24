@@ -10,6 +10,7 @@
 
 #include "CeeelDoc.h"
 #include "CeeelView.h"
+#include <windows.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -123,7 +124,31 @@ BOOL CCeeelApp::InitInstance()
 	// The one and only window has been initialized, so show and update it
 	m_pMainWnd->ShowWindow(SW_SHOW);
 	m_pMainWnd->UpdateWindow();
+
+	update_game_vars();
 	return TRUE;
+}
+
+void CCeeelApp::update_game_vars() {
+	typedef BOOL(WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
+	LPFN_ISWOW64PROCESS fnIsWow64Process;
+	BOOL bIsWow64 = FALSE;
+
+	//IsWow64Process is not available on all supported versions of Windows.
+	//Use GetModuleHandle to get a handle to the DLL that contains the function
+	//and GetProcAddress to get a pointer to the function if available.
+
+	fnIsWow64Process = (LPFN_ISWOW64PROCESS)GetProcAddress(
+	GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
+
+	if (NULL != fnIsWow64Process)
+	{
+		if (!fnIsWow64Process(GetCurrentProcess(), &bIsWow64))
+		{
+				//handle error
+		}
+	}
+	is_64_bit_architecture = bIsWow64;
 }
 
 int CCeeelApp::ExitInstance()
