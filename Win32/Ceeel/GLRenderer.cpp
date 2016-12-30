@@ -5,50 +5,20 @@
 #include <stdlib.h>
 #include <glm/vec3.hpp>
 
+#include <string>
 #include <fstream>
 #include <sstream>
 #include <vector>
 using namespace std;
 
-Board::Board(const string& file_name) {
-	string model;
-	string info_package;
-	std::vector< glm::vec3 > temp_uvs;
-	std::vector< glm::vec3 > temp_normals;
-	ifstream infile;
-	infile.open(file_name);
-	if (!infile) {
-		AfxMessageBox(_T("unable to oo"));
-	}
-	while (getline(infile, info_package)) {
-		if (info_package.substr(0, 2) == "v ")
-		{
-			istringstream s(info_package.substr(2));
-			glm::vec3 v; s >> v.x; s >> v.y; s >> v.z;
-			vertices.push_back(v);
-		}
-		else if (info_package.substr(0, 2) == "f ")
-		{
-			istringstream s(info_package.substr(2));
-			string a, b, c;
-			s >> a; s >> b; s >> c;
 
-		//	a--; b--; c--;
-		elements.push_back(a); elements.push_back(b); elements.push_back(c);
-		}
-		else if (info_package[0] == '#')
-		{
-			/* ignoring this line */
-		}
-		else
-		{
-			/* ignoring this line */
-		}
-	}
+
+Board::Board(const string& file_name) {
+	model.read_from_obj_file(file_name);
 }
 
 
-CGLRenderer::CGLRenderer():m_board("C:\\Ceel_the_game\\Ceeel\\assets\\board.obj")
+CGLRenderer::CGLRenderer():m_board("C:\\Ceel_the_game\\Ceeel\\assets\\Axis.obj")
 {
 }
 
@@ -120,9 +90,7 @@ bool CGLRenderer::CreateGLContext(CDC* pDC)
 
 void CGLRenderer::PrepareScene()
 {
-//	glClearColor(248.0/255.0, 243.0/255.0, 230.0/255.0, 0.0);
-	glClearColor(BACK_COLOR, 0.0);	
-	SetData();
+	glClearColor(BACK_COLOR, 0.0);
 }
 
 void CGLRenderer::SetData()
@@ -189,31 +157,11 @@ void CGLRenderer::Reshape(int w, int h)
 }
 
 void Board::draw() {
-	float mid_z = -1;
-
-	float left_x = -2.0;
-	float right_x = 2.0;
-	float front_z = 2.0;
-	float back_z = -2.0;
-	float top_y = 2.0;
-	float bottom_y = -2.0;
-
-	glColor3f(TOKEN_COLOR);
-	glBegin(GL_QUADS);
-	glVertex3f(left_x, top_y, front_z);
-	glVertex3f(0.0, top_y, front_z);
-	glVertex3f(0.0, 0.0, front_z);
-	glVertex3f(left_x, 0.0, front_z);
-
-	glColor3f(1.0, 0.0, 0.0);
-	glVertex3f(right_x, -0.5, back_z);
-	glVertex3f(0.0, -0.5, back_z);
-	glVertex3f(0.0, 0.0, back_z);
-	glVertex3f(right_x, 0.0, back_z);
-	glEnd();
+	model.draw();
+	
 }
 
-void CGLRenderer::DrawScene(CDC *pDC)
+void CGLRenderer::DrawScene(CDC *pDC, PointCloud2D * point_cloud)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -221,17 +169,43 @@ void CGLRenderer::DrawScene(CDC *pDC)
 	glLoadIdentity();
 	//glOrtho (-5,5,-5,5,-5,5);
 
+	observer.y = 0.0;
+	observer.z = 5.0;
+	perspective_volume.set_left_right(-2.0, 2.0);
+	ortho_volume.set_left_right(-2.0, 2.0);
+
+	perspective_volume.set_bottom_top(-1.0,1.0);
+	ortho_volume.set_bottom_top(-1.0, 1.0);
+
+	perspective_volume.set_near_far(observer.z, 3.0, -10.0);
+	ortho_volume.set_near_far(observer.z, 3.0, -10.0);
+	
+	//perspective_volume.frustrum();
+//	ortho_volume.ortho();
 	float near_val = 1.0;
 	float far_val = 10.0;
 
 	float frustrum_left = -2.0;
-	float frustrum_right = -1 * frustrum_left;
-	glFrustum(frustrum_left, frustrum_right, -1.0, 1.0, near_val, far_val);
+	float frustrum_right = 2.0;
+//	glFrustum(frustrum_left, frustrum_right, -1.0, 1.0, near_val, far_val);
+	glOrtho(frustrum_left, frustrum_right, -1.0, 1.0, near_val, far_val);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	float my_location = 5.0;
-	gluLookAt(0.0, 0.0, my_location, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	gluLookAt(observer.x, observer.y, observer.z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	glColor3f(GRID_COLOR); 
+	glBegin(GL_LINES);
+	glVertex3f(0.0, -1.0, 0.0);
+	glVertex3f(0.0, 1.0, 0.0);
+	glEnd();
 	
+	if (point_cloud) {
+		glColor3f(POINT_COLOR);
+		glPointSize(4.0);
+		point_cloud->draw();
+	}
+
+
 	m_board.draw();
 	
 	SwapBuffers(pDC->m_hDC);

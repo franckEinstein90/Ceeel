@@ -22,11 +22,15 @@ PointCloud2D::PointCloud2D(DataSet& ds) {
 		new_data_point.x = ds.x_values[i];
 		new_data_point.y = ds.y_values[i];
 		new_data_point.z = 0.0;
+		vertices.push_back(new_data_point);
 	}
 
 }
 void PointCloud2D::draw() {
-
+	glBegin(GL_POINTS);
+	for (auto x : vertices)
+		glVertex3f(x.x, x.y, x.z);
+	glEnd();
 }
 Mesh::Triangle::Triangle(vector<string> params) :
 	point_indices(3),
@@ -93,9 +97,7 @@ void Mesh::read_from_obj_file(const string& file_name) {
 		}
 	}
 }
-
 void Mesh::draw() {
-
 	glBegin(GL_TRIANGLES);
 	glColor3f(TOKEN_COLOR);
 	for (auto t : triangles) {
