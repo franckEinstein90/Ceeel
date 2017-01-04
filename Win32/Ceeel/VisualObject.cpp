@@ -7,6 +7,7 @@ using namespace glm;
 #include <vector>
 #include <fstream>
 #include <string>
+#include <tuple>
 using namespace std;
 
 #include "DataSet.h"
@@ -16,17 +17,18 @@ PointCloud::PointCloud(istream& is) {
 
 }
 
-PointCloud2D::PointCloud2D(DataSet& ds) {
-	for (int i = 0; i < ds.x_values.size(); i++) {
+PointCloud::PointCloud(DataSet& ds) {
+	for (int i = 0; i < ds.size(); i++) {
 		vec3 new_data_point;
-		new_data_point.x = ds.x_values[i];
-		new_data_point.y = ds.y_values[i];
-		new_data_point.z = 0.0;
+		tuple<double, double, double> point = ds[i];
+		new_data_point.x = get<0>(point);
+		new_data_point.y = get<1>(point);
+		new_data_point.z = get<2>(point);
 		vertices.push_back(new_data_point);
 	}
-
 }
-void PointCloud2D::draw() {
+
+void PointCloud::draw() {
 	glBegin(GL_POINTS);
 	for (auto x : vertices)
 		glVertex3f(x.x, x.y, x.z);

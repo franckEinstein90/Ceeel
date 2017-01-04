@@ -73,9 +73,9 @@ void CCeeelView::OnDraw(CDC* /*pDC*/)
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
-
+	
 //	m_glRenderer.set_camera(camera_vector);
-	m_glRenderer.DrawScene(m_pDC);
+	m_glRenderer.DrawScene(m_pDC, pDoc->m_point_cloud);
 }
 
 

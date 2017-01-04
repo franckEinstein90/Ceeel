@@ -23,6 +23,8 @@ public:
 class PointCloud : VisualObject {
 public:
 	PointCloud(istream&);
+	PointCloud(DataSet&);
+	void draw();
 };
 
 class PointCloud2D : VisualObject {

@@ -12,7 +12,9 @@
 #include "CeeelDoc.h"
 
 #include <propkey.h>
+#include <string>
 
+using namespace std;
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -27,7 +29,7 @@ END_MESSAGE_MAP()
 
 // CCeeelDoc construction/destruction
 
-CCeeelDoc::CCeeelDoc()
+CCeeelDoc::CCeeelDoc():m_point_cloud(NULL)
 {
 	// TODO: add one-time construction code here
 
@@ -37,6 +39,19 @@ CCeeelDoc::~CCeeelDoc()
 {
 }
 
+void CCeeelDoc::update_data(const CString& data_string, size_t cols) {
+	//Conversion to std::string
+	CStringA temp2(data_string.GetString());
+	string input(temp2);
+	PointCloud* old_point_cloud = m_point_cloud;
+
+	this->m_point_cloud = NULL;
+	this->m_data_set.get_raw_input(input, cols);
+	m_point_cloud = new PointCloud(this->m_data_set);
+	if (old_point_cloud) {
+		delete old_point_cloud;
+	}
+}
 BOOL CCeeelDoc::OnNewDocument()
 {
 	if (!CDocument::OnNewDocument())

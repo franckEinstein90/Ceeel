@@ -5,18 +5,23 @@
 
 #pragma once
 
-
+#include "DataSet.h"
+#include "VisualObject.h"
 class CCeeelDoc : public CDocument
 {
 protected: // create from serialization only
 	CCeeelDoc();
 	DECLARE_DYNCREATE(CCeeelDoc)
 
-// Attributes
+/************DATA UPDATING*******************/
+protected:
+	DataSet m_data_set;
 public:
+	void update_data(const CString&, size_t);
 
-// Operations
+/*************POINT_CLOUD*******************/
 public:
+	PointCloud * m_point_cloud;
 
 // Overrides
 public:

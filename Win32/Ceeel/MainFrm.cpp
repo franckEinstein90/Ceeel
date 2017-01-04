@@ -32,7 +32,7 @@ static UINT indicators[] =
 
 // CMainFrame construction/destruction
 
-CMainFrame::CMainFrame():m_init_splitters(false)
+CMainFrame::CMainFrame():splitter(this)
 {
 }
 
@@ -99,34 +99,32 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 {
-	
-	if (!m_main_splitter.CreateStatic(this, 1, 2))
+	bool init_static = splitter.init_static();
+	if (!init_static)
 	{
 		MessageBox(_T("Error setting up splitter frames!"), _T("Init Error!"),
 			MB_OK | MB_ICONERROR);
 		return FALSE;
 	}
 	CRect cr;  // client rectangle -
-						 // used to calculate client sizes
-
 	GetClientRect(&cr);
-	if (!m_main_splitter.CreateView(0, 0, RUNTIME_CLASS(InfoPanel),
-		CSize(cr.Width() / 4, cr.Height()), pContext))
+	CSize col1_size(cr.Width() / 4, cr.Height());
+	CSize col2_size(cr.Width() - col1_size.cx, cr.Height());
+	bool init_view1 = splitter.init_view(0, col1_size, RUNTIME_CLASS(InfoPanel), pContext);
+	if (!init_view1)
 	{
 		MessageBox(_T("Error setting up splitter frames!"), _T("Init Error!"),
 			MB_OK | MB_ICONERROR);
 		return FALSE;
 	}
-	if (!m_main_splitter.CreateView(0, 1,
-		RUNTIME_CLASS(CCeeelView),
-		CSize((cr.Width() / 4) * 3, cr.Height()), pContext))
+	bool init_view2 = splitter.init_view(1, col2_size, RUNTIME_CLASS(CCeeelView), pContext);
+	if(!init_view2)
 	{
 		MessageBox(_T("Error setting up splitter frames!"),
 			_T("Init Error!"), MB_OK | MB_ICONERROR);
 		return FALSE;
 	}
-	m_init_splitters = true;
-}
+	}
 
 
 void CMainFrame::OnSize(UINT nType, int cx, int cy)
@@ -144,4 +142,10 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 		m_viewport_splitter.RecalcLayout();
 	}
 	// TODO: Add your message handler code here*/
+}
+
+
+afx_msg LRESULT CMainFrame::OnOrthomode(WPARAM wParam, LPARAM lParam)
+{
+	return 0;
 }

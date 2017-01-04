@@ -161,7 +161,7 @@ void Board::draw() {
 	
 }
 
-void CGLRenderer::DrawScene(CDC *pDC, PointCloud2D * point_cloud)
+void CGLRenderer::DrawScene(CDC *pDC, PointCloud * point_cloud)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -199,6 +199,7 @@ void CGLRenderer::DrawScene(CDC *pDC, PointCloud2D * point_cloud)
 	glVertex3f(0.0, 1.0, 0.0);
 	glEnd();
 	
+	glRotatef(90.0, 0.0, 1.0, 0.0);
 	if (point_cloud) {
 		glColor3f(POINT_COLOR);
 		glPointSize(4.0);

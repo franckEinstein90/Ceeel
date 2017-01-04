@@ -1,44 +1,45 @@
 #include "stdafx.h"
 #include "DataSet.h"
 
-void DataSet::get_raw_input(string data) {
+
+void DataSet::get_raw_input(string data, size_t dimension) {
+	if (dimension < 1 || dimension > 3) {
+		throw DataSet_Error("Bad Dimension Specification");
+	}
+	this->m_dimentions = dimension;
+	
 	x_values.clear();
 	y_values.clear();
+	z_values.clear();
 	stringstream ss(data);
-	double x, y;
-	while (ss >> x >> y) {
+	double x, y, z;
+	while (ss.good()) {
+		ss >> x;
 		x_values.push_back(x);
-		y_values.push_back(y);
+		if (dimension > 1) {
+			ss >> y;
+			y_values.push_back(y);
+		}
+		else {
+			y_values.push_back(0.0);
+		}
+		if (dimension > 2) {
+			ss >> z;
+			z_values.push_back(z);
+		}
+		else {
+			z_values.push_back(0.0);
+		}
 	}
 }
 
-void DataSet::insert_left(bt* new_node, bt* tree_head) {
-	if (!tree_head->left) {
-		tree_head->left = new_node;
+tuple<double, double, double> DataSet::operator[](size_t idx) const {
+	if (idx < 0) {
+		throw DataSet_Error("Bad size index");
 	}
+	return make_tuple(x_values[idx], y_values[idx], z_values[idx]);
 }
-void DataSet::insert_right(bt* new_node, bt* tree_head) {
-}
-DataSet::bt* DataSet::find_insert_pt(bt* new_node, bt* tree_head) {
-	if (tree_head->x_value < new_node->x_value) {
-		insert_right(new_node, tree_head);
-		return tree_head;
-	}
-	if (tree_head->x_value > new_node->x_value) {
-		insert_left(new_node, tree_head);
-		return tree_head;
-	}
-}
-void DataSet::insert_in_bt(float xval, float yval){
-	bt* new_node = new bt(xval, yval);
-	if (xy_values == NULL) {
-		xy_values = new bt(xval, yval);
-		return;
-	}
-	find_insert_pt(new_node, xy_values);
-}
-
-DataSet::DataSet():xy_values(NULL)
+DataSet::DataSet()
 {
 }
 

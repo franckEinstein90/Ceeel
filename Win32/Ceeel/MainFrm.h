@@ -4,12 +4,13 @@
 
 #pragma once
 #define INFOBAR_SIZE 150	// constant for creating
+#include "WindowSplitter.h"
 
 class CMainFrame : public CFrameWnd
 {
 	
-	CSplitterWnd m_main_splitter, m_viewport_splitter;
-	bool m_init_splitters;
+	
+	WindowSplitter splitter;
 protected: // create from serialization only
 	CMainFrame();
 	DECLARE_DYNCREATE(CMainFrame)
@@ -44,6 +45,8 @@ protected:
 	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
 public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+protected:
+	afx_msg LRESULT OnOrthomode(WPARAM wParam, LPARAM lParam);
 };
 
 

@@ -89,7 +89,7 @@ public:
 	bool CreateGLContext(CDC* pDC); 	// Creates OpenGL Rendering Context
 	void PrepareScene();		// Scene preparation stuff
 	void Reshape(int w, int h);	// Changing viewport
-	void DrawScene(CDC* pDC, PointCloud2D *);		// Draws the scene
+	void DrawScene(CDC* pDC, PointCloud *);		// Draws the scene
 
 	void DestroyScene();		// Cleanup
 
